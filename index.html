@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    html * {
+      font-size: 16px;
+      color: '#2020131';
+      font-family: Roboto, sans-serif;
+      background-color: black;
+    }
+
+    .container {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 100%;
+    }
+
+    .btn-container {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      min-width: 100%;
+    }
+
+    .btn-container button {
+      margin: .2rem .3rem;
+      color: white;
+    }
+
+    #timer {
+      font-size: 10rem;
+      font-weight: 500;
+      color: white;
+    }
+
+    #loopStatus {
+      font-size: 10px;
+      color: white;
+    }
+
+    #relativeTime {
+      font-size: 10rem;
+      font-weight: 500;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="container">
+   <div style="display: flex;">
+    <div id="relativeTime"></div>
+    <div id="timer">:00</div>
+   </div>
+    <div class="btn-container">
+      <button onclick="setTime()">Set Time</button>
+      <button onclick="pauseTimer()">Pause</button>
+      <button onclick="playTimer()">Play</button>
+      <button onclick="stopTimer()">Stop</button>
+      <!-- <button id="loop-btn" onclick="toggleLoop()">Loop</button> -->
+    </div>
+    <!-- <p id="loopStatus">Loop Status: Off</p> -->
+  </section>
+
+  <script>
+    let minutes = 0;
+    let seconds = 0;
+    let interval;
+    let loop = false;
+    let looping = false;
+
+    function updateTime() {
+      let displayMinutes = minutes < 10 ? "0" + minutes : minutes;
+      let displaySeconds = seconds < 10 ? "0" + seconds : seconds;
+
+      console.log({ displayMinutes, minutes, fn: isNaN(minutes) });
+      // document.getElementById("timer").textContent = displayMinutes + ":" + displaySeconds;
+      document.getElementById("timer").textContent =  ":" + displaySeconds;
+    }
+
+    
+function updateRelativeTime() {
+    const currentDate = new Date();
+    const currentHour = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+    document.getElementById("relativeTime").textContent = currentHour + ":" + (currentMinutes < 10 ? "0" + currentMinutes : currentMinutes);
+}
+
+    function setTime() {
+      if (!looping) {
+        minutes = parseInt(prompt("Enter minutes:")) || 0;
+        seconds = parseInt(prompt("Enter seconds:")) || 0;
+      } else {
+        minutes = 1; // Default time to 1 minute if looping is true
+        seconds = 0;
+      }
+      updateTime();
+    }
+
+    function startTimer() {
+      interval = setInterval(function () {
+        if (seconds === 0) {
+          if (minutes === 0) {
+            if (!looping) {
+              clearInterval(interval);
+              return;
+            } else {
+              // Reset time to 1 minute if looping is true and countdown reaches 00:00
+              minutes = 0;
+              seconds = 59;
+              updateTime();
+            }
+          } else {
+            minutes--;
+            seconds = 59;
+          }
+        } else {
+          seconds--;
+        }
+        updateTime();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      looping = false;
+    }
+
+    function playTimer() {
+      looping = true;
+      startTimer();
+    }
+
+    function stopTimer() {
+      clearInterval(interval);
+      minutes = 1;
+      seconds = 0;
+      looping = false;
+      loop = false;
+      updateTime();
+      document.getElementById("loopStatus").textContent = "Loop Status: Off";
+    }
+
+    // function toggleLoop() {
+    //   loop = !loop;
+    //   if (!loop) {
+    //     looping = false;
+    //     document.getElementById("loopStatus").textContent = "Loop Status: Off";
+    //   } else {
+    //     document.getElementById("loopStatus").textContent = "Loop Status: On";
+    //   }
+    // }
+
+    
+// Update relative time every second
+setInterval(updateRelativeTime, 1000);
+
+  </script>
+
+</body>
+
+</html>
+
